@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import io
 import os
+import sys
+from shutil import rmtree
 
-from setuptools import setup
+from setuptools import setup, Command
 
 
 def get_version(fname="flake8_bandit.py"):
@@ -13,19 +16,60 @@ def get_version(fname="flake8_bandit.py"):
 
 
 # Package meta-data.
-NAME = 'flake8_bandit'
-DESCRIPTION = 'Automated Bandit testing using flake8.'
-long_description = "Automate Bandit testing using flake8."
-URL = 'https://github.com/tylerwince/flake8-bandit'
-EMAIL = 'tyler@myndshft.com'
-AUTHOR = 'Tyler Wince'
+NAME = "flake8_bandit"
+DESCRIPTION = "Automated security testing with bandit and flake8."
+URL = "https://github.com/tylerwince/flake8-bandit"
+EMAIL = "tyler@myndshft.com"
+AUTHOR = "Tyler Wince"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'flake8'
+    "flake8"
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
+
+with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
+    long_description = "\n" + f.read()
+
+# Load the package"s __version__.py module as a dictionary.
+about = {}
+with open(os.path.join(here, NAME, "__version__.py")) as f:
+    exec(f.read(), about)
+
+
+class UploadCommand(Command):
+    """Support setup.py upload."""
+
+    description = "Build and publish the package."
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print("\033[1m{0}\033[0m".format(s))
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        try:
+            self.status("Removing previous builds…")
+            rmtree(os.path.join(here, "dist"))
+        except OSError:
+            pass
+
+        self.status("Building Source and Wheel (universal) distribution…")
+        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+
+        self.status("Uploading the package to PyPi via Twine…")
+        os.system("twine upload dist/*")
+
+        sys.exit()
+
 
 setup(
     name=NAME,
@@ -35,10 +79,10 @@ setup(
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
-    py_modules=['mypackage'],
+    py_modules=["flake8_bandit"],
     install_requires=REQUIRED,
     include_package_data=True,
-    license='MIT',
+    license="MIT",
     entry_points={
             "flake8.extension": [
                 "B=flake8_bandit:BanditTester",
@@ -55,4 +99,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
     ],
+    cmdclass={
+        "upload": UploadCommand,
+    },
 )
