@@ -23,14 +23,13 @@ EMAIL = "tyler@myndshft.com"
 AUTHOR = "Tyler Wince"
 
 # What packages are required for this module to be executed?
-REQUIRED = [
-    "flake8"
-]
+REQUIRED = ["flake8", "bandit"]
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = "\n" + f.read()
+
 
 class UploadCommand(Command):
     """Support setup.py upload."""
@@ -40,7 +39,7 @@ class UploadCommand(Command):
 
     @staticmethod
     def status(s):
-        """Prints things in bold."""
+        """Print things in bold."""
         print("\033[1m{0}\033[0m".format(s))
 
     def initialize_options(self):
@@ -57,7 +56,8 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        os.system("{0} setup.py sdist bdist_wheel --universal".format(
+            sys.executable))
 
         self.status("Uploading the package to PyPi via Twine…")
         os.system("twine upload dist/*")
@@ -74,20 +74,20 @@ setup(
     author_email=EMAIL,
     url=URL,
     py_modules=["flake8_bandit"],
+    python_requires='>=3',
     install_requires=REQUIRED,
     include_package_data=True,
     license="MIT",
     entry_points={
-            "flake8.extension": [
-                "B=flake8_bandit:BanditTester",
-            ],
-        },
+        "flake8.extension": [
+            "B=flake8_bandit:BanditTester",
+        ],
+    },
     classifiers=[
         "Framework :: Flake8",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Topic :: Security",
         "Topic :: Software Development :: Libraries :: Python Modules",
@@ -95,5 +95,4 @@ setup(
     ],
     cmdclass={
         "upload": UploadCommand,
-    },
-)
+    }, )
