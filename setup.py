@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import io
 import os
 import sys
@@ -20,6 +18,7 @@ NAME = "flake8_bandit"
 DESCRIPTION = "Automated security testing with bandit and flake8."
 URL = "https://github.com/tylerwince/flake8-bandit"
 EMAIL = "tyler@myndshft.com"
+
 AUTHOR = "Tyler Wince"
 
 # What packages are required for this module to be executed?
@@ -50,16 +49,16 @@ class UploadCommand(Command):
 
     def run(self):
         try:
-            self.status("Removing previous builds…")
+            self.status("Removing previous builds...")
             rmtree(os.path.join(here, "dist"))
         except OSError:
             pass
 
-        self.status("Building Source and Wheel (universal) distribution…")
+        self.status("Building Source and Wheel (universal) distribution...")
         os.system("{0} setup.py sdist bdist_wheel --universal".format(
             sys.executable))
 
-        self.status("Uploading the package to PyPi via Twine…")
+        self.status("Uploading the package to PyPi via Twine...")
         os.system("twine upload dist/*")
 
         sys.exit()
@@ -74,7 +73,6 @@ setup(
     author_email=EMAIL,
     url=URL,
     py_modules=["flake8_bandit"],
-    python_requires='>=3',
     install_requires=REQUIRED,
     include_package_data=True,
     license="MIT",
@@ -88,6 +86,8 @@ setup(
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Security",
         "Topic :: Software Development :: Libraries :: Python Modules",

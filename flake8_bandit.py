@@ -11,8 +11,9 @@ from bandit.core import config as b_config
 from bandit.core import manager as b_manager
 from flake8_polyfill import stdin
 
-__version__ = "v0.2.0"
+__version__ = "v1.0.0"
 
+# So we can play nice with emacs and atom
 stdin.monkey_patch('pycodestyle')
 
 
@@ -36,7 +37,6 @@ class BanditTester(object):
     def _check_source(self):
         b_conf = b_config.BanditConfig()
         b_mgr = b_manager.BanditManager(b_conf, 'file', False)
-        # it is happening here
         b_mgr.discover_files([self.filename])
         b_mgr.run_tests()
         issues = []
@@ -46,22 +46,28 @@ class BanditTester(object):
             i["issue_text"] = item.text
             i["line_number"] = item.lineno
             issues.append(i)
-        os.remove("tempbanditpythonfile.py")
+        try:
+            os.remove("tempbanditpythonfile.py")
+        except Exception as e:
+            self.error = e
         return issues
 
     def run(self):
         """Use to run the check."""
         for error in self._check_source():
+            # Format it nicely for flake8
             message = "%s %s" % (error["test_id"], error["issue_text"])
             yield (error["line_number"], 0, message, type(self))
 
     def _load_source(self):
         """Load the source for the specified file."""
         if self.filename == "stdin":
+            # atom, emacs
             self.source = pycodestyle.stdin_get_value()
             with open("tempbanditpythonfile.py", "w+") as f:
                 f.write(self.source)
             self.filename = "tempbanditpythonfile.py"
         else:
+            # vim, vscode
             with open(self.filename) as f:
                 self.source = f.read()
