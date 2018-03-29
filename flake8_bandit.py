@@ -11,7 +11,7 @@ from bandit.core import config as b_config
 from bandit.core import manager as b_manager
 from flake8_polyfill import stdin
 
-__version__ = "v1.0.0"
+__version__ = "v1.0.1"
 
 # So we can play nice with emacs and atom
 stdin.monkey_patch('pycodestyle')
