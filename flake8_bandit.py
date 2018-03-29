@@ -42,7 +42,7 @@ class BanditTester(object):
         issues = []
         for item in b_mgr.get_issue_list():
             i = {}
-            i["test_id"] = item.test_id
+            i["test_id"] = item.test_id.replace("B", "S")
             i["issue_text"] = item.text
             i["line_number"] = item.lineno
             issues.append(i)

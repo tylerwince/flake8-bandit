@@ -22,7 +22,7 @@ EMAIL = "tyler@myndshft.com"
 AUTHOR = "Tyler Wince"
 
 # What packages are required for this module to be executed?
-REQUIRED = ["flake8", "bandit"]
+REQUIRED = ["flake8", "bandit", "flake8-polyfill"]
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -78,7 +78,7 @@ setup(
     license="MIT",
     entry_points={
         "flake8.extension": [
-            "B=flake8_bandit:BanditTester",
+            "S=flake8_bandit:BanditTester",
         ],
     },
     classifiers=[
@@ -95,4 +95,5 @@ setup(
     ],
     cmdclass={
         "upload": UploadCommand,
-    }, )
+    },
+)
