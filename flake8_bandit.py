@@ -5,6 +5,7 @@ Bandit is a security linter for python code and needs to be installed
 for this flake8 extension to work properly.
 """
 import ast
+import logging
 
 import pycodestyle
 from bandit.core.node_visitor import BanditNodeVisitor
@@ -13,6 +14,9 @@ from bandit.core.config import BanditConfig
 from bandit.core.metrics import Metrics
 from bandit.core.meta_ast import BanditMetaAst
 from flake8_polyfill import stdin
+from flake8.options.config import ConfigFileFinder
+
+LOG = logging.getLogger(__name__)
 
 __version__ = "v2.0.0"
 
@@ -30,13 +34,21 @@ class BanditTester(object):
     name = "flake8-bandit"
     version = __version__
 
-    def __init__(self, tree, filename, lines):  # tree is required by flake8
+    def __init__(self, tree, filename, lines):
         self.filename = filename
         self.tree = tree
         self.lines = lines
+        self.bandit_config = None
 
     def _check_source(self):
-        bnv = BanditNodeVisitor(self.filename, BanditMetaAst(), BanditTestSet(BanditConfig(), None), True, [], Metrics())
+        bnv = BanditNodeVisitor(
+            self.filename,
+            BanditMetaAst(),
+            BanditTestSet(BanditConfig(config_file=self.bandit_config)),
+            False,
+            [],
+            Metrics(),
+        )
         bnv.generic_visit(self.tree)
         issues = []
         for item in bnv.tester.results:
@@ -51,6 +63,9 @@ class BanditTester(object):
 
     def run(self):
         """run will check file source through the bandit code linter."""
+        cfg = ConfigFileFinder("bandit", None, None)
+        if cfg.local_config_files():
+            self.bandit_config = cfg.local_config_files()[0]
         if not self.tree or not self.lines:
             self._load_source()
         for error in self._check_source():
