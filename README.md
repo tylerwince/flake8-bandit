@@ -6,4 +6,4 @@ You already use flake8 to lint all your code for errors, ensure docstrings are f
 
 ## How's it work?
 
-We use the [bandit](https://github.com/openstack/bandit/blob/master/bandit/cli/main.py) package from [Open Stack](https://www.openstack.org) for all the security testing. This package is simply a flake8 wrapper around their project (similar to [flake8-isort](https://github.com/gforcada/flake8-isort)).
+We use the [bandit](https://github.com/PyCQA/bandit) package from [PyCQA](http://meta.pycqa.org/en/latest/) for all the security testing.

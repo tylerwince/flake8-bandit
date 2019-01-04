@@ -17,12 +17,12 @@ def get_version(fname="flake8_bandit.py"):
 NAME = "flake8_bandit"
 DESCRIPTION = "Automated security testing with bandit and flake8."
 URL = "https://github.com/tylerwince/flake8-bandit"
-EMAIL = "tyler@myndshft.com"
+EMAIL = "tylerwince@gmail.com"
 
 AUTHOR = "Tyler Wince"
 
 # What packages are required for this module to be executed?
-REQUIRED = ["flake8", "bandit", "flake8-polyfill"]
+REQUIRED = ["flake8", "bandit", "flake8-polyfill", "pycodestyle"]
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -55,8 +55,7 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution...")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(
-            sys.executable))
+        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
 
         self.status("Uploading the package to PyPi via Twine...")
         os.system("twine upload dist/*")
@@ -76,11 +75,7 @@ setup(
     install_requires=REQUIRED,
     include_package_data=True,
     license="MIT",
-    entry_points={
-        "flake8.extension": [
-            "S=flake8_bandit:BanditTester",
-        ],
-    },
+    entry_points={"flake8.extension": ["S=flake8_bandit:BanditTester"]},
     classifiers=[
         "Framework :: Flake8",
         "Environment :: Console",
@@ -93,7 +88,5 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
     ],
-    cmdclass={
-        "upload": UploadCommand,
-    },
+    cmdclass={"upload": UploadCommand},
 )
