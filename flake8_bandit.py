@@ -8,7 +8,7 @@ from bandit.core.metrics import Metrics
 from bandit.core.node_visitor import BanditNodeVisitor
 from bandit.core.test_set import BanditTestSet
 
-__version__ = "v2.0.0"
+__version__ = "2.0.0"
 
 
 class BanditTester(object):
