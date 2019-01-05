@@ -109,5 +109,4 @@ Pipfile.lock
 # Macos stuff
 .DS_Store
 
-# My own test file
-testfile.py
+.bandit

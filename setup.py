@@ -3,7 +3,7 @@ import os
 import sys
 from shutil import rmtree
 
-from setuptools import setup, Command
+from setuptools import Command, setup
 
 
 def get_version(fname="flake8_bandit.py"):
