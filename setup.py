@@ -100,12 +100,9 @@ setup(
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
-    packages=find_packages(exclude=("tests",)),
     # If your package is a single module, use this instead of 'packages':
-    # py_modules=['mypackage'],
-    # entry_points={
-    #     'console_scripts': ['mycli=mymodule:cli'],
-    # },
+    py_modules=["flake8_bandit"],
+    entry_points={"flake8.extension": ["S=flake8_bandit:BanditTester"]},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
