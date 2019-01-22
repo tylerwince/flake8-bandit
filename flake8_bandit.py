@@ -40,7 +40,7 @@ class BanditTester(object):
         config = configparser.ConfigParser()
         try:
             config.read(ini_file)
-            profile = {k: v for k, v in config.items("bandit")}
+            profile = {k: v.replace("S", "B") for k, v in config.items("bandit")}
             if profile.get("skips"):
                 profile["exclude"] = profile.get("skips").split(",")
             if profile.get("tests"):
