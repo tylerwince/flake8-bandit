@@ -38,14 +38,14 @@ class BanditTester(object):
     @classmethod
     def add_options(cls, parser):
         parser.add_option(
-            "--skips",
+            "--bandit-skips",
             parse_from_config=True,
             help="Bandit tests to skip.",
             comma_separated_list=True,
         )
 
         parser.add_option(
-            "--tests",
+            "--bandit-tests",
             parse_from_config=True,
             help="Bandit tests to run.",
             comma_separated_list=True,
@@ -53,12 +53,11 @@ class BanditTester(object):
 
     @classmethod
     def parse_options(cls, options):
-        cls.skips = options.skips
-        cls.tests = options.tests
+        cls.skips = [i.replace("S", "B") for i in options.bandit_skips]
+        cls.tests = [i.replace("S", "B") for i in options.bandit_tests]
 
     def _create_profile(self):
         if self.skips or self.tests and not (self.skips and self.tests):
-            # FIXME works but I need to find a way to replace the S with a B here
             return {"exclude": self.skips} if self.skips else {"include": self.tests}
         ini_file = ConfigFileFinder("bandit", None, None).local_config_files()
         config = configparser.ConfigParser()
