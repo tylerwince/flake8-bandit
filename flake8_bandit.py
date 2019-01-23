@@ -16,7 +16,7 @@ except ImportError:
     import ConfigParser as configparser
 
 
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 
 
 class BanditTester(object):
@@ -35,26 +35,55 @@ class BanditTester(object):
         self.tree = tree
         self.lines = lines
 
-    def _check_source(self):
+    @classmethod
+    def add_options(cls, parser):
+        parser.add_option(
+            "--skips",
+            parse_from_config=True,
+            help="Bandit tests to skip.",
+            comma_separated_list=True,
+        )
+
+        parser.add_option(
+            "--tests",
+            parse_from_config=True,
+            help="Bandit tests to run.",
+            comma_separated_list=True,
+        )
+
+    @classmethod
+    def parse_options(cls, options):
+        cls.skips = options.skips
+        cls.tests = options.tests
+
+    def _create_profile(self):
+        if self.skips or self.tests and not (self.skips and self.tests):
+            # FIXME works but I need to find a way to replace the S with a B here
+            return {"exclude": self.skips} if self.skips else {"include": self.tests}
         ini_file = ConfigFileFinder("bandit", None, None).local_config_files()
         config = configparser.ConfigParser()
         try:
             config.read(ini_file)
-            profile = {k: v.replace("S", "B") for k, v in config.items("bandit")}
-            if profile.get("skips"):
-                profile["exclude"] = profile.get("skips").split(",")
-            if profile.get("tests"):
-                profile["include"] = profile.get("tests").split(",")
+            t = {
+                # FIXME I hate this double replace, but just checking functionality
+                k.replace("tests", "include").replace("skips", "exclude"): v.replace(
+                    "S", "B"
+                )
+                for k, v in config.items("bandit")
+            }
+            return t
         except (configparser.Error, KeyError, TypeError) as e:
             if str(e) != "No section: 'bandit'":
                 import sys
-                err = "Unable to parse config file: %s\n" % e
-                sys.stderr.write(err)
-            profile = {}
+
+                sys.stderr.write("Unable to parse config file: %s\n" % e)
+            return {}
+
+    def _check_source(self):
         bnv = BanditNodeVisitor(
             self.filename,
             BanditMetaAst(),
-            BanditTestSet(BanditConfig(), profile=profile),
+            BanditTestSet(BanditConfig(), profile=self._create_profile()),
             False,
             [],
             Metrics(),
