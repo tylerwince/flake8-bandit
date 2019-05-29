@@ -1,15 +1,36 @@
 language: python
 sudo: required
 dist: xenial
-python:
-- '3.6'
-- 3.6-dev
-- '3.7'
-- 3.7-dev
-- 3.8-dev
-- nightly
-allow_failures:
-- nightly
+matrix:
+  include:
+    - python: '3.6'
+    - python: 3.6-dev
+    - python: '3.7'
+    - python: 3.7-dev
+      dist: xenial
+      sudo: true
+    - python: 3.8-dev
+      dist: xenial
+      sudo: true
+    - python: nightly
+      dist: xenial
+      sudo: true
+  allow_failures:
+    - python: 3.8-dev
+      dist: xenial
+      sudo: true
+    - python: nightly
+      dist: xenial
+      sudo: true
+# python:
+# - '3.6'
+# - 3.6-dev
+# - '3.7'
+# - 3.7-dev
+# - 3.8-dev
+# - nightly
+# allow_failures:
+# - nightly
 install:
 - pip install -e .
 script:
