@@ -2,20 +2,18 @@ from flask import Flask
 
 app = Flask(__name__)
 
-
-@app.route("/")
+@app.route('/')
 def main():
     raise
 
-
-# bad
+#bad
 app.run(debug=True)
 
-# okay
+#okay
 app.run()
 app.run(debug=False)
 
-# unrelated
+#unrelated
 run()
 run(debug=True)
 run(debug)

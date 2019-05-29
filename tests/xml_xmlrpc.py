@@ -1,10 +1,8 @@
 import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
-
 def is_even(n):
-    return n % 2 == 0
-
+    return n%2 == 0
 
 server = SimpleXMLRPCServer(("localhost", 8000))
 print("Listening on port 8000...")

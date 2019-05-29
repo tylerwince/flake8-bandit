@@ -1,3 +1,3 @@
 import os
 
-os.system("/bin/echo hi")
+os.system('/bin/echo hi')

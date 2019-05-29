@@ -1,5 +1,5 @@
 # bad
-for i in {0, 1}:
+for i in {0,1}:
     try:
         a = i
     except:
@@ -15,7 +15,7 @@ while keep_trying:
 
 
 # bad
-for i in {0, 2}:
+for i in {0,2}:
     try:
         a = i
     except ZeroDivisionError:
