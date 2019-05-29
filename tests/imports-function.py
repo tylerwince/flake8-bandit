@@ -8,5 +8,5 @@ subprocess = __import__("subprocess")
 __import__()
 
 # TODO(??): bandit can not find this one unfortunately (no symbol tab)
-a = 'subprocess'
+a = "subprocess"
 __import__(a)

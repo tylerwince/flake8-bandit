@@ -6,13 +6,13 @@ xmlString = "<note>\n<to>Tove</to>\n<from>Jani</from>\n<heading>Reminder</headin
 # unsafe
 tree = badET.fromstring(xmlString)
 print(tree)
-badET.parse('filethatdoesntexist.xml')
-badET.iterparse('filethatdoesntexist.xml')
+badET.parse("filethatdoesntexist.xml")
+badET.iterparse("filethatdoesntexist.xml")
 a = badET.XMLParser()
 
 # safe
 tree = goodET.fromstring(xmlString)
 print(tree)
-goodET.parse('filethatdoesntexist.xml')
-goodET.iterparse('filethatdoesntexist.xml')
+goodET.parse("filethatdoesntexist.xml")
+goodET.iterparse("filethatdoesntexist.xml")
 a = goodET.XMLParser()

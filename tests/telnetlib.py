@@ -3,7 +3,7 @@ import getpass
 
 host = sys.argv[1]
 
-username = raw_input('Username:')
+username = raw_input("Username:")
 password = getpass.getpass()
 tn = telnetlib.Telnet(host)
 

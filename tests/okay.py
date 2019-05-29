@@ -1,1 +1,1 @@
-print('hopefully no vulnerabilities here')
+print("hopefully no vulnerabilities here")

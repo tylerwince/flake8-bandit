@@ -2,7 +2,7 @@ import marshal
 import tempfile
 
 
-serialized = marshal.dumps({'a': 1})
+serialized = marshal.dumps({"a": 1})
 print(marshal.loads(serialized))
 
 file_obj = tempfile.TemporaryFile()
