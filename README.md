@@ -1,5 +1,5 @@
 # flake8-bandit
-https://travis-ci.org/tylerwince/flake8-bandit.svg?branch=master
+[![Build Status](https://travis-ci.org/tylerwince/flake8-bandit.svg?branch=master)](https://travis-ci.org/tylerwince/flake8-bandit)
 
 Automated security testing built right into your workflow!
 
