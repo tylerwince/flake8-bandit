@@ -1,4 +1,5 @@
 # flake8-bandit
+https://travis-ci.org/tylerwince/flake8-bandit.svg?branch=master
 
 Automated security testing built right into your workflow!
 

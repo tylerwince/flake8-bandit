@@ -1,0 +1,40 @@
+language: python
+sudo: required
+dist: xenial
+matrix:
+  include:
+    - python: '3.6'
+    - python: 3.6-dev
+    - python: '3.7'
+    - python: 3.7-dev
+      dist: xenial
+      sudo: true
+    - python: 3.8-dev
+      dist: xenial
+      sudo: true
+    - python: nightly
+      dist: xenial
+      sudo: true
+  allow_failures:
+    - python: 3.6-dev
+    - python: 3.7-dev
+      dist: xenial
+      sudo: true
+    - python: 3.8-dev
+      dist: xenial
+      sudo: true
+    - python: nightly
+      dist: xenial
+      sudo: true
+install:
+- pip install -e .
+script:
+- pytest -vv
+deploy:
+  provider: pypi
+  user: tylerwince
+  password:
+    secure: AIXam8h9CmkI/Gu4Oa53hriRxQC13zW3Ztvh5FDR5qiWomxjrQidI+z7WDAnaKsxlU5L06qbXZUOSmIm0RGP7BuEV25arLALAN3eKh/xXS2Jk39lenNIbI1Yaium1anu/8xSZm/kkUQeBSJjae1uGJSME/9o8IuKV5AGn7d2RRyxSCIM9KEpQDWnnbHjnMld8YTbEkgHNOeAN0ziS5UFY1Nu7QvcwpZMMEEEGgBd/t6u8NuwSlLEJrBPhAksw5B7/GPfuz0v72EdFYT7WMDAceHoLeM34Eu0pMI9XJSK/gCq1voVKI3gHFDKlO9Oj6GUj3eYhAaVpuKQW4q3Ped+5UERS0LMv+pN8lT4rmteF5QMecJdflRFrkWgiStdXdfkmvH+tGIbuHjwy1eOtHtyfSVteOjFRw3OsR66M9x6xlIrjmvGF4gXM7D+fu96r9ygJv0SpjQ9ThUeYqVHBHoYihPgdHvf5KBMXujk4seiBqtuneNQgKn2VjlYLSfhMNlq1Q+wEXTaiigjWQYRuJakiLQPUrs9Cy/h6dDzuOcqNj/oTBv8JSjG3IGlWoWTTyAuXe6koZ7q9FlNWI9R0RWxbayHHWjIujwufgqOzlT0ytzY00oOI74i71+yJBM7BKDFXsoSAdiWQ3bi447vxi0fltEE+2+4VFlSdk7WBp4tBHk=
+  on:
+    branch: master
+  skip_existing: true
