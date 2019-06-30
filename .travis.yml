@@ -29,7 +29,7 @@ matrix:
 install:
 - pip install -e .
 script:
-- pytest -vv
+- pytest
 deploy:
   provider: pypi
   user: tylerwince
