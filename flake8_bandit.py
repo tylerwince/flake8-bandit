@@ -15,8 +15,13 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
+try:
+    from flake8.engine import pep8 as stdin_utils
+except ImportError:
+    from flake8 import utils as stdin_utils
 
-__version__ = "2.1.1"
+
+__version__ = "2.1.2"
 
 
 class BanditTester(object):
@@ -90,7 +95,7 @@ class BanditTester(object):
 
         if self.filename in ("stdin", "-", None):
             self.filename = "stdin"
-            self.lines = pycodestyle.stdin_get_value().splitlines(True)
+            self.lines = stdin_utils.stdin_get_value().splitlines(True)
         else:
             self.lines = pycodestyle.readlines(self.filename)
         if not self.tree:
