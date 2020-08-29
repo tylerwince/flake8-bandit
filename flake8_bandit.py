@@ -1,8 +1,14 @@
 """Implementation of bandit security testing in Flake8."""
 import ast
+import configparser
+import sys
+from functools import lru_cache
+from pathlib import Path
+from typing import Dict, NamedTuple, Set
 
 import pycodestyle
 from flake8.options.config import ConfigFileFinder
+from flake8 import utils as stdin_utils
 
 from bandit.core.config import BanditConfig
 from bandit.core.meta_ast import BanditMetaAst
@@ -10,18 +16,63 @@ from bandit.core.metrics import Metrics
 from bandit.core.node_visitor import BanditNodeVisitor
 from bandit.core.test_set import BanditTestSet
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
-try:
-    from flake8.engine import pep8 as stdin_utils
-except ImportError:
-    from flake8 import utils as stdin_utils
-
 
 __version__ = "2.1.2"
+
+
+class Flake8BanditConfig(NamedTuple):
+    profile: Dict
+    target_paths: Set
+    excluded_paths: Set
+
+    @classmethod
+    @lru_cache(maxsize=32)
+    def from_config_file(cls) -> "Flake8BanditConfig":
+        # set defaults
+        profile = {}
+        target_paths = set()
+        excluded_paths = set()
+
+        # populate config from `.bandit` configuration file
+        ini_file = ConfigFileFinder("bandit", None, None).local_config_files()
+        config = configparser.ConfigParser()
+        try:
+            config.read(ini_file)
+            bandit_config = {k: v for k, v in config.items("bandit")}
+
+            # test-set profile
+            if bandit_config.get("skips"):
+                profile["exclude"] = (
+                    bandit_config.get("skips").replace("S", "B").split(",")
+                )
+            if bandit_config.get("tests"):
+                profile["include"] = (
+                    bandit_config.get("tests").replace("S", "B").split(",")
+                )
+
+            # file include/exclude
+            if bandit_config.get("targets"):
+                paths = bandit_config.get("targets").split(",")
+                for path in paths:
+                    # convert absolute to relative
+                    if path.startswith("/"):
+                        path = "." + path
+                    target_paths.add(Path(path))
+
+            if bandit_config.get("exclude"):
+                paths = bandit_config.get("exclude").split(",")
+                for path in paths:
+                    # convert absolute to relative
+                    if path.startswith("/"):
+                        path = "." + path
+                    excluded_paths.add(Path(path))
+
+        except (configparser.Error, KeyError, TypeError) as e:
+            profile = {}
+            if str(e) != "No section: 'bandit'":
+                sys.stderr.write(f"Unable to parse config file: {e}")
+
+        return cls(profile, target_paths, excluded_paths)
 
 
 class BanditTester(object):
@@ -41,25 +92,24 @@ class BanditTester(object):
         self.lines = lines
 
     def _check_source(self):
-        ini_file = ConfigFileFinder("bandit", None, None).local_config_files()
-        config = configparser.ConfigParser()
-        try:
-            config.read(ini_file)
-            profile = {k: v.replace("S", "B") for k, v in config.items("bandit")}
-            if profile.get("skips"):
-                profile["exclude"] = profile.get("skips").split(",")
-            if profile.get("tests"):
-                profile["include"] = profile.get("tests").split(",")
-        except (configparser.Error, KeyError, TypeError) as e:
-            if str(e) != "No section: 'bandit'":
-                import sys
-                err = "Unable to parse config file: %s\n" % e
-                sys.stderr.write(err)
-            profile = {}
+        config = Flake8BanditConfig.from_config_file()
+
+        # potentially exit early if bandit config tells us to
+        filepath = Path(self.filename)
+        filepaths = set(filepath.parents)
+        filepaths.add(filepath)
+        if (
+            config.excluded_paths and config.excluded_paths.intersection(filepaths)
+        ) or (
+            config.target_paths
+            and len(config.target_paths.intersection(filepaths)) == 0
+        ):
+            return []
+
         bnv = BanditNodeVisitor(
             self.filename,
             BanditMetaAst(),
-            BanditTestSet(BanditConfig(), profile=profile),
+            BanditTestSet(BanditConfig(), profile=config.profile),
             False,
             [],
             Metrics(),
