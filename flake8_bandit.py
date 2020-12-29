@@ -123,6 +123,8 @@ class BanditTester(object):
                 "test_id": item.test_id.replace("B", "S"),
                 "issue_text": item.text,
                 "line_number": item.lineno,
+                "severity": item.severity,
+                "confidence": item.confidence,
             }
             for item in bnv.tester.results
         ]
@@ -133,7 +135,12 @@ class BanditTester(object):
         if not self.tree or not self.lines:
             self._load_source()
         for warn in self._check_source():
-            message = "%s %s" % (warn["test_id"], warn["issue_text"])
+            message = "%s %s (CL: %s, risk: %s)" % (
+                warn["test_id"],
+                warn["issue_text"],
+                warn["confidence"],
+                warn["severity"],
+            )
             yield (warn["line_number"], 0, message, type(self))
 
     def _load_source(self):
