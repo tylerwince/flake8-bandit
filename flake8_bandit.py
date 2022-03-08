@@ -106,15 +106,27 @@ class BanditTester(object):
         ):
             return []
 
-        bnv = BanditNodeVisitor(
-            fname=self.filename,
-            fdata=None,
-            metaast=BanditMetaAst(),
-            testset=BanditTestSet(BanditConfig(), profile=config.profile),
-            debug=False,
-            nosec_lines=[],
-            metrics=Metrics(),
-        )
+
+        try:
+            bnv = BanditNodeVisitor(
+                fname=self.filename,
+                fdata=None,
+                metaast=BanditMetaAst(),
+                testset=BanditTestSet(BanditConfig(), profile=config.profile),
+                debug=False,
+                nosec_lines=[],
+                metrics=Metrics(),
+            )
+        except TypeError:
+            # bandit < 1.7.3 (https://github.com/tylerwince/flake8-bandit/issues/21)
+            bnv = BanditNodeVisitor(
+                fname=self.filename,
+                metaast=BanditMetaAst(),
+                testset=BanditTestSet(BanditConfig(), profile=config.profile),
+                debug=False,
+                nosec_lines=[],
+                metrics=Metrics(),
+            )
         bnv.generic_visit(self.tree)
         return [
             {
