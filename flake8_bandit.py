@@ -106,6 +106,7 @@ class BanditTester(object):
         ):
             return []
 
+
         try:
             bnv = BanditNodeVisitor(
                 fname=self.filename,
