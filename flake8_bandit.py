@@ -107,12 +107,13 @@ class BanditTester(object):
             return []
 
         bnv = BanditNodeVisitor(
-            self.filename,
-            BanditMetaAst(),
-            BanditTestSet(BanditConfig(), profile=config.profile),
-            False,
-            [],
-            Metrics(),
+            fname=self.filename,
+            fdata=None,
+            metaast=BanditMetaAst(),
+            testset=BanditTestSet(BanditConfig(), profile=config.profile),
+            debug=False,
+            nosec_lines=[],
+            metrics=Metrics(),
         )
         bnv.generic_visit(self.tree)
         return [
