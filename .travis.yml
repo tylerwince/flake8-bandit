@@ -15,8 +15,8 @@ matrix:
 install:
 - pip install -e .
 
-script:
-- pytest
+# script:
+# - pytest
 
 deploy:
   provider: pypi
