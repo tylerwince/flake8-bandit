@@ -17,7 +17,7 @@ from bandit.core.node_visitor import BanditNodeVisitor
 from bandit.core.test_set import BanditTestSet
 
 
-__version__ = "2.1.2"
+__version__ = "3.0.0"
 
 
 class Flake8BanditConfig(NamedTuple):
