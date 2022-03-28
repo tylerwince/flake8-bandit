@@ -21,4 +21,4 @@ In this case, we've specified to ignore a number of paths, and to only test for 
 
 ## How's it work?
 
-We use the [bandit](https://github.com/PyCQA/bandit) package from [PyCQA](http://meta.pycqa.org/en/latest/) for all the security testing.
+We use the [bandit](https://github.com/PyCQA/bandit) package from [PyCQA](https://meta.pycqa.org/#) for all the security testing.
