@@ -22,7 +22,7 @@ AUTHOR = "Tyler Wince"
 VERSION = get_version()
 
 # What packages are required for this module to be executed?
-REQUIRED = ["flake8", "bandit>=1.7.3", "flake8-polyfill", "pycodestyle"]
+REQUIRED = ["flake8>=5.0.0", "bandit>=1.7.3", "flake8-polyfill", "pycodestyle"]
 
 # What packages are optional?
 EXTRAS = {
