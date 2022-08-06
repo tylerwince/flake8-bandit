@@ -65,8 +65,6 @@ class Flake8BanditConfig(NamedTuple):
 
         except (ExecutionError, KeyError, TypeError) as e:
             profile = {}
-            if str(e) != "No section: 'bandit'":
-                sys.stderr.write(f"Unable to parse config file: {e}")
 
         return cls(profile, target_paths, excluded_paths)
 
