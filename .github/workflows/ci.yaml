@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+
+  pull_request:
+    branches: [main]
+
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        python-version: # Only supported versions of CPython are tested.
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11.0-rc.1" # Our one exception to the rule
+
+    steps:
+    - name: Checkout Code
+      if: ${{ github.event_name != 'pull_request_target' }}
+      uses: actions/checkout@v3
+
+    - name: Checkout PR
+      if: ${{ github.event_name == 'pull_request_target' }}
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Dependencies
+      run: pip install -e .
+
+    - name: Run Tests
+      run: |
+        ERROR_COUNT="$(flake8 --select=S tests | wc -l)"
+        if [ "$ERROR_COUNT" != "495" ]; then
+          echo "Unexpected error count: ${ERROR_COUNT}"
+          exit 1
+        fi
