@@ -1,23 +1,21 @@
 """Implementation of bandit security testing in Flake8."""
 import ast
-import configparser
 import sys
 from functools import lru_cache
 from pathlib import Path
 from typing import Dict, NamedTuple, Set
 
 import pycodestyle
-from flake8.options.config import ConfigFileFinder
-from flake8 import utils as stdin_utils
-
 from bandit.core.config import BanditConfig
 from bandit.core.meta_ast import BanditMetaAst
 from bandit.core.metrics import Metrics
 from bandit.core.node_visitor import BanditNodeVisitor
 from bandit.core.test_set import BanditTestSet
+from flake8 import utils as stdin_utils
+from flake8.exceptions import ExecutionError
+from flake8.options.config import load_config
 
-
-__version__ = "3.0.0"
+__version__ = "4.0.0"
 
 
 class Flake8BanditConfig(NamedTuple):
@@ -34,11 +32,9 @@ class Flake8BanditConfig(NamedTuple):
         excluded_paths = set()
 
         # populate config from `.bandit` configuration file
-        ini_file = ConfigFileFinder("bandit", None, None).local_config_files()
-        config = configparser.ConfigParser()
         try:
-            config.read(ini_file)
-            bandit_config = {k: v for k, v in config.items("bandit")}
+            cfg, _ = load_config(".bandit", [])
+            bandit_config = {k: v for k, v in cfg["bandit"].items()}
 
             # test-set profile
             if bandit_config.get("skips"):
@@ -67,10 +63,8 @@ class Flake8BanditConfig(NamedTuple):
                         path = "." + path
                     excluded_paths.add(Path(path))
 
-        except (configparser.Error, KeyError, TypeError) as e:
+        except (ExecutionError, KeyError, TypeError) as e:
             profile = {}
-            if str(e) != "No section: 'bandit'":
-                sys.stderr.write(f"Unable to parse config file: {e}")
 
         return cls(profile, target_paths, excluded_paths)
 
