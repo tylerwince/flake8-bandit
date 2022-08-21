@@ -2,16 +2,15 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*' # Only run against release tags
 
 jobs:
   release:
     runs-on: ubuntu-22.04
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
 
     steps:
     - name: Checkout Code
-      if: ${{ github.event_name != 'pull_request_target' }}
       uses: actions/checkout@v3
 
     - name: Set up Python
