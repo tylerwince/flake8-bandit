@@ -15,7 +15,7 @@ from flake8 import utils as stdin_utils
 from flake8.exceptions import ExecutionError
 from flake8.options.config import load_config
 
-__version__ = "4.1.0"
+__version__ = "4.1.1"
 
 
 class Flake8BanditConfig(NamedTuple):
