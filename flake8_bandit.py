@@ -39,7 +39,7 @@ class Flake8BanditConfig(NamedTuple):
             bandit_config = {k: v for k, v in cfg["bandit"].items()}
 
             # test-set profile
-            config_file = bandit_config.get("config", "")
+            config_file = bandit_config.get("configfile", "")
             if bandit_config.get("skips"):
                 profile["exclude"] = (
                     bandit_config.get("skips").replace("S", "B").split(",")
