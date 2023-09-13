@@ -19,6 +19,7 @@ __version__ = "4.1.1"
 
 
 class Flake8BanditConfig(NamedTuple):
+    config_file: str
     profile: Dict
     target_paths: Set
     excluded_paths: Set
@@ -27,6 +28,7 @@ class Flake8BanditConfig(NamedTuple):
     @lru_cache(maxsize=32)
     def from_config_file(cls) -> "Flake8BanditConfig":
         # set defaults
+        config_file = ""
         profile = {}
         target_paths = set()
         excluded_paths = set()
@@ -37,6 +39,7 @@ class Flake8BanditConfig(NamedTuple):
             bandit_config = {k: v for k, v in cfg["bandit"].items()}
 
             # test-set profile
+            config_file = bandit_config.get("config", "")
             if bandit_config.get("skips"):
                 profile["exclude"] = (
                     bandit_config.get("skips").replace("S", "B").split(",")
@@ -66,7 +69,7 @@ class Flake8BanditConfig(NamedTuple):
         except (ExecutionError, KeyError, TypeError) as e:
             profile = {}
 
-        return cls(profile, target_paths, excluded_paths)
+        return cls(config_file, profile, target_paths, excluded_paths)
 
 
 class BanditTester(object):
@@ -106,7 +109,7 @@ class BanditTester(object):
                 fname=self.filename,
                 fdata=None,
                 metaast=BanditMetaAst(),
-                testset=BanditTestSet(BanditConfig(), profile=config.profile),
+                testset=BanditTestSet(BanditConfig(config.config_file), profile=config.profile),
                 debug=False,
                 nosec_lines={},
                 metrics=Metrics(),
@@ -116,7 +119,7 @@ class BanditTester(object):
             bnv = BanditNodeVisitor(
                 fname=self.filename,
                 metaast=BanditMetaAst(),
-                testset=BanditTestSet(BanditConfig(), profile=config.profile),
+                testset=BanditTestSet(BanditConfig(config.config_file), profile=config.profile),
                 debug=False,
                 nosec_lines=[],
                 metrics=Metrics(),
